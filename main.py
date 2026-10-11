@@ -1,5 +1,5 @@
 from campusflow.tickets import create_ticket, calculate_priority
-from campusflow.workflow import update_ticket_status, get_work_queue
+from campusflow.workflow import update_status, assign_ticket, get_work_queue
 from campusflow.reports import generate_reports
 from campusflow.storage import save_tickets, load_tickets
 
@@ -26,7 +26,6 @@ def run_create_ticket(tickets):
         print("--> Action cancelled. Returning to main menu.")
         return
     
-    # Case-insensitive category match
     category = next((c for c in VALID_CATEGORIES if c.lower() == category_input.lower()), None)
     if not category:
         print(f"Invalid category '{category_input}'. Must be one of: {', '.join(VALID_CATEGORIES)}")
@@ -38,7 +37,6 @@ def run_create_ticket(tickets):
         print("--> Action cancelled. Returning to main menu.")
         return
 
-    # Case-insensitive urgency match
     urgency = next((u for u in VALID_URGENCIES if u.lower() == urgency_input.lower()), None)
     if not urgency:
         print(f"Invalid urgency '{urgency_input}'. Must be one of: {', '.join(VALID_URGENCIES)}")
@@ -85,18 +83,42 @@ def run_assign_ticket(tickets):
         print("--> Action cancelled.")
         return
 
-    found = False
-    for t in tickets:
-        if t.get('id') == ticket_id:
-            t['assignee'] = assignee
-            found = True
-            break
-
-    if found:
+    try:
+        assign_ticket(tickets, ticket_id, assignee)
         save_tickets(tickets)
         print(f"--> Ticket #{ticket_id} successfully assigned to {assignee}!")
-    else:
+    except Exception as e:
+        print(f"--> Error assigning ticket: {e}")
+
+def run_update_status(tickets):
+    print("\n--- Update Ticket Status --- (Type '0' or 'cancel' to return)")
+    ticket_id_input = prompt_with_cancel("Enter Ticket ID to update: ")
+    if ticket_id_input is None:
+        print("--> Action cancelled.")
+        return
+    
+    try:
+        ticket_id = int(ticket_id_input)
+    except ValueError:
+        print("Invalid Ticket ID.")
+        return
+
+    ticket = next((t for t in tickets if t.get('id') == ticket_id), None)
+    if not ticket:
         print(f"--> Ticket #{ticket_id} not found.")
+        return
+
+    new_status = prompt_with_cancel("Enter new status (OPEN, IN_PROGRESS, RESOLVED, CLOSED): ")
+    if new_status is None:
+        print("--> Action cancelled.")
+        return
+
+    try:
+        update_status(ticket, new_status.upper())
+        save_tickets(tickets)
+        print(f"--> Ticket #{ticket_id} status updated to {new_status.upper()}!")
+    except Exception as e:
+        print(f"--> Error updating status: {e}")
 
 def main():
     tickets = load_tickets()
@@ -121,16 +143,7 @@ def main():
         elif choice == "3":
             run_assign_ticket(tickets)
         elif choice == "4":
-            ticket_id_input = prompt_with_cancel("Enter Ticket ID to update: ")
-            if ticket_id_input is not None:
-                try:
-                    ticket_id = int(ticket_id_input)
-                    new_status = prompt_with_cancel("Enter new status (OPEN, IN_PROGRESS, RESOLVED, CLOSED): ")
-                    if new_status is not None:
-                        update_ticket_status(tickets, ticket_id, new_status.upper())
-                        save_tickets(tickets)
-                except ValueError:
-                    print("Invalid Ticket ID.")
+            run_update_status(tickets)
         elif choice == "5":
             queue = get_work_queue(tickets)
             print("\n--- Current Work Queue ---")
