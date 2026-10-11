@@ -1,7 +1,10 @@
-from campusflow.tickets import create_ticket, list_tickets, assign_ticket, VALID_CATEGORIES, VALID_URGENCIES
+from campusflow.tickets import create_ticket, calculate_priority
 from campusflow.workflow import update_ticket_status, get_work_queue
 from campusflow.reports import generate_reports
 from campusflow.storage import save_tickets, load_tickets
+
+VALID_CATEGORIES = ["Network", "Hardware", "Software", "Other"]
+VALID_URGENCIES = ["Low", "Medium", "High"]
 
 def prompt_with_cancel(prompt_text):
     val = input(prompt_text).strip()
@@ -56,6 +59,45 @@ def run_create_ticket(tickets):
     save_tickets(tickets)
     print(f"--> Ticket #{ticket['id']} created successfully!")
 
+def run_list_tickets(tickets):
+    print("\n--- All Tickets ---")
+    if not tickets:
+        print("No tickets found.")
+        return
+    for t in tickets:
+        print(f"[{t.get('id')}] {t.get('title')} | Category: {t.get('category')} | Urgency: {t.get('urgency')} | Status: {t.get('status')} | Assignee: {t.get('assignee', 'None')}")
+
+def run_assign_ticket(tickets):
+    print("\n--- Assign Ticket --- (Type '0' or 'cancel' to return)")
+    ticket_id_input = prompt_with_cancel("Enter Ticket ID to assign: ")
+    if ticket_id_input is None:
+        print("--> Action cancelled.")
+        return
+    
+    try:
+        ticket_id = int(ticket_id_input)
+    except ValueError:
+        print("Invalid Ticket ID.")
+        return
+
+    assignee = prompt_with_cancel("Enter assignee name: ")
+    if assignee is None:
+        print("--> Action cancelled.")
+        return
+
+    found = False
+    for t in tickets:
+        if t.get('id') == ticket_id:
+            t['assignee'] = assignee
+            found = True
+            break
+
+    if found:
+        save_tickets(tickets)
+        print(f"--> Ticket #{ticket_id} successfully assigned to {assignee}!")
+    else:
+        print(f"--> Ticket #{ticket_id} not found.")
+
 def main():
     tickets = load_tickets()
     
@@ -75,21 +117,20 @@ def main():
         if choice == "1":
             run_create_ticket(tickets)
         elif choice == "2":
-            list_tickets(tickets)
+            run_list_tickets(tickets)
         elif choice == "3":
-            ticket_id = prompt_with_cancel("Enter Ticket ID to assign: ")
-            if ticket_id is not None:
-                assignee = prompt_with_cancel("Enter assignee name: ")
-                if assignee is not None:
-                    assign_ticket(tickets, ticket_id, assignee)
-                    save_tickets(tickets)
+            run_assign_ticket(tickets)
         elif choice == "4":
-            ticket_id = prompt_with_cancel("Enter Ticket ID to update: ")
-            if ticket_id is not None:
-                new_status = prompt_with_cancel("Enter new status (OPEN, IN_PROGRESS, RESOLVED, CLOSED): ")
-                if new_status is not None:
-                    update_ticket_status(tickets, ticket_id, new_status.upper())
-                    save_tickets(tickets)
+            ticket_id_input = prompt_with_cancel("Enter Ticket ID to update: ")
+            if ticket_id_input is not None:
+                try:
+                    ticket_id = int(ticket_id_input)
+                    new_status = prompt_with_cancel("Enter new status (OPEN, IN_PROGRESS, RESOLVED, CLOSED): ")
+                    if new_status is not None:
+                        update_ticket_status(tickets, ticket_id, new_status.upper())
+                        save_tickets(tickets)
+                except ValueError:
+                    print("Invalid Ticket ID.")
         elif choice == "5":
             queue = get_work_queue(tickets)
             print("\n--- Current Work Queue ---")
