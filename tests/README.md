@@ -1,47 +1,50 @@
-# CampusFlow
+ **# CampusFlow — Engineer B: Workflow Lifecycle & Automation**
 
-CampusFlow is a Python project we build to help record and manage issues on campus.
+This module forms the core workflow engine for **\*\*CampusFlow\*\***, an automated helpdesk and ticketing system designed to streamline campus support requests.&#x20;
 
-## Features
+As **\*\*Engineer B\*\***, this component focuses on managing ticket status transitions, handling resolution lifecycle logic, enforcing state rules, and executing automated task triggers.
 
-a) Create tickets
-b) Check ticket details
-c) Generate ticket IDs
-d) Set ticket priority
-e) Keep ticket information
+\---
 
-## Who Can Use CampusFlow?
+**## 🛠 Tech Stack & Tools**
 
-CampusFlow can be used by students and IT staff on campus. Students can report problems, while IT staff can manage tickets and work on fixing them.
+\- **\*\*Language:\*\*** Python 3.10+
+\- **\*\*Testing:\*\*** \`unittest\` / \`pytest\`
+\- **\*\*Environment:\*\*** Visual Studio Code / Linux CLI
+\- **\*\*Version Control:\*\*** Git & GitHub (\`campusflow-team\`)
 
-## Ticket Categories
+\---
 
-- Network
-- Hardware
-- Software
-- Other
+**## 🚀 Key Features & Responsibilities**
 
-## Priority Levels
+**### 1. Ticket State Machine & Status Transitions**
+\- Enforces valid status transitions across the ticket lifecycle:
+  - \`OPEN\` ➔ \`IN_PROGRESS\`
+  - \`IN_PROGRESS\` ➔ \`RESOLVED\` / \`ON_HOLD\`
+  - \`RESOLVED\` ➔ \`CLOSED\`
+\- Prevents invalid or illegal status jumps (e.g., direct transition from \`OPEN\` to \`CLOSED\` without resolution notes).
 
-- **Critical:** A ticket is critical when the urgency is high and 10 or more people are affected.
-- **High:** A ticket is high priority when the urgency is high or 10 or more people are affected.
-- **Medium:** A ticket is medium priority when the urgency is medium or 3 or more people are affected.
-- **Low:** A ticket is low priority when none of the higher priority rules apply.
+**### 2. Workflow Validation & Exception Handling**
+\- Handles edge cases such as missing ticket parameters, unauthorized status changes, and missing resolution details.
+\- Raises structured exceptions to maintain data integrity across the system.
 
-## Requirements
+**### 3. Automated Lifecycle Actions**
+\- Auto-assigns timestamps when tickets transition to \`RESOLVED\` or \`CLOSED\`.
+\- Triggers notification hooks when high-priority or urgent support tickets are submitted or escalated.
 
-- Python 3
+\---
 
-## Run Tests
+**## 📁 Repository & Branch Structure**
 
+\`\`\`text
+campusflow-team/
+├── src/
+│   ├── workflow\.py       # Core workflow state & transition logic
+│   └── utils.py          # Helper functions & validation rules
+├── tests/
+│   └── test_workflow\.py  # Unit tests for workflow lifecycle
+└── README.md             # Engineer B documentation
 
-py -m unittest discover -s tests -v
+''' I ise this to run the unit testing '''
 
-
-## My Part (Person A (Makolo Gift) )
-
-I worked on creating tickets, checking inputs, generating ticket IDs, setting priorities, and writing tests.
-
-## Status
-
-My part is done, and all 14 tests are passing.
+''' python3 -m unittest discover -s tests'''
