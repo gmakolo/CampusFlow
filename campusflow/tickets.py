@@ -1,4 +1,3 @@
-
 def calculate_priority(urgency, affected_users):
     if urgency == "high" and affected_users >= 10:
         return "critical"
@@ -20,8 +19,7 @@ def validate_ticket(title, category, urgency, affected_users):
         raise ValueError("Invalid urgency")
 
     if (
-        not isinstance(affected_users, int)
-        or isinstance(affected_users, bool)
+        type(affected_users) is not int
         or affected_users <= 0
     ):
         raise ValueError("Affected users must be a positive integer")
@@ -62,4 +60,48 @@ def create_ticket(
         "priority": calculate_priority(urgency, affected_users),
         "status": "open",
         "assigned_to": None,
+        "notes": [],
     }
+
+
+def add_note(tickets, ticket_id, author, message):
+    """Add a validated note to an open or in-progress ticket."""
+    ticket = next(
+        (item for item in tickets if item.get("id") == ticket_id),
+        None,
+    )
+
+    if ticket is None:
+        raise ValueError(f"Ticket ID {ticket_id} not found.")
+
+    if ticket.get("status") not in ("open", "in_progress"):
+        raise ValueError("Cannot add notes to a resolved ticket.")
+
+    if not isinstance(author, str) or not author.strip():
+        raise ValueError("Author cannot be empty.")
+
+    if not isinstance(message, str):
+        raise ValueError("Message must be text.")
+
+    message = message.strip()
+    if not 5 <= len(message) <= 300:
+        raise ValueError("Message must be between 5 and 300 characters.")
+
+    notes = ticket.setdefault("notes", [])
+    highest_number = 0
+
+    for note in notes:
+        note_id = note.get("note_id", "")
+        if isinstance(note_id, str) and note_id.startswith("N"):
+            number_text = note_id[1:]
+            if number_text.isdigit():
+                highest_number = max(highest_number, int(number_text))
+
+    new_note = {
+        "note_id": f"N{highest_number + 1:03d}",
+        "author": author.strip(),
+        "message": message,
+    }
+
+    notes.append(new_note)
+    return new_note

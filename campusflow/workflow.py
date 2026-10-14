@@ -1,42 +1,71 @@
 def assign_ticket(tickets, ticket_id, staff_name):
-    """Assigns a ticket to a staff member if both exist and staff_name is valid."""
-    if not staff_name or not staff_name.strip():
+    """Assign a ticket to a valid staff member."""
+    if not isinstance(staff_name, str) or not staff_name.strip():
         raise ValueError("Staff name cannot be empty.")
-    
+
     for ticket in tickets:
         if ticket["id"] == ticket_id:
+            if ticket["status"] == "resolved":
+                raise ValueError("Reopen the ticket before assigning it.")
+
             ticket["assigned_to"] = staff_name.strip()
             return True
+
     raise ValueError(f"Ticket ID {ticket_id} not found.")
 
+
 def update_status(ticket, new_status):
-    """Enforces state transitions: open -> in_progress -> resolved."""
+    """Validate ticket status transitions before updating."""
     valid_statuses = ["open", "in_progress", "resolved"]
+
     if new_status not in valid_statuses:
         raise ValueError(f"Invalid status: {new_status}")
-    
+
     current_status = ticket["status"]
-    
-    # Rule: Unassigned ticket cannot move to in_progress
-    if new_status == "in_progress" and not ticket.get("assigned_to"):
-        raise ValueError("Cannot move unassigned ticket to in_progress.")
-    
-    # Rule: Resolved tickets can only be modified via explicit reopen to open
-    if current_status == "resolved" and new_status != "open":
-        raise ValueError("Resolved tickets can only be changed back to open.")
-        
+
+    if current_status == "open":
+        if new_status == "resolved":
+            raise ValueError("An open ticket must be in progress before resolving.")
+
+        if new_status == "in_progress" and not ticket.get("assigned_to"):
+            raise ValueError("Cannot move an unassigned ticket to in_progress.")
+
+    elif current_status == "in_progress":
+        if new_status == "open":
+            raise ValueError("Reopen is only allowed from resolved status.")
+
+    elif current_status == "resolved":
+        if new_status != "open":
+            raise ValueError("Resolved tickets can only be reopened.")
+
     ticket["status"] = new_status
     return True
 
+
 def get_work_queue(tickets):
-    """Returns unresolved tickets sorted by priority and numeric ID."""
-    priority_weight = {"critical": 4, "high": 3, "medium": 2, "low": 1}
-    
-    unresolved = [t for t in tickets if t["status"] != "resolved"]
-    
-    def sort_key(t):
-        p_val = priority_weight.get(t.get("priority", "low"), 1)
-        num_id = int(t["id"][1:]) if t["id"].startswith("T") and t["id"][1:].isdigit() else 0
-        return (-p_val, num_id)
-        
-    return sorted(unresolved, key=sort_key)
+    """Return only open tickets, sorted by priority and numeric ID."""
+    priority_weight = {
+        "critical": 4,
+        "high": 3,
+        "medium": 2,
+        "low": 1,
+    }
+
+    open_tickets = [
+        ticket for ticket in tickets
+        if ticket["status"] == "open"
+    ]
+
+    def sort_key(ticket):
+        priority = priority_weight.get(ticket.get("priority", "low"), 1)
+        ticket_id = ticket.get("id", "")
+
+        number = (
+            int(ticket_id[1:])
+            if ticket_id.startswith("T") and ticket_id[1:].isdigit()
+            else 0
+        )
+
+        return (-priority, number)
+
+    return sorted(open_tickets, key=sort_key)
