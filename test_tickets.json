@@ -1,0 +1,13 @@
+[
+    {
+        "id": "T001",
+        "title": "WiFi issue",
+        "category": "Network",
+        "urgency": "high",
+        "affected_users": 12,
+        "priority": "critical",
+        "status": "open",
+        "assigned_to": null,
+        "notes": []
+    }
+]

@@ -1,4 +1,3 @@
-
 import unittest
 
 from campusflow.tickets import (
@@ -6,6 +5,7 @@ from campusflow.tickets import (
     validate_ticket,
     generate_ticket_id,
     create_ticket,
+    add_note,
 )
 
 
@@ -52,6 +52,14 @@ class TestValidateTicket(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_ticket("WiFi issue", "Network", "high", -2)
 
+    def test_float_affected_users_rejected(self):
+        with self.assertRaises(ValueError):
+            validate_ticket("WiFi issue", "Network", "high", 2.5)
+
+    def test_boolean_affected_users_rejected(self):
+        with self.assertRaises(ValueError):
+            validate_ticket("WiFi issue", "Network", "high", True)
+
 
 class TestTicketCreation(unittest.TestCase):
     def test_create_ticket(self):
@@ -61,6 +69,7 @@ class TestTicketCreation(unittest.TestCase):
         self.assertEqual(ticket["priority"], "critical")
         self.assertEqual(ticket["status"], "open")
         self.assertIsNone(ticket["assigned_to"])
+        self.assertEqual(ticket["notes"], [])
 
     def test_unique_ticket_ids(self):
         first = create_ticket("WiFi issue", "Network", "high", 12)
@@ -74,6 +83,79 @@ class TestTicketCreation(unittest.TestCase):
     def test_invalid_ticket_is_rejected(self):
         with self.assertRaises(ValueError):
             create_ticket("", "Network", "high", 12)
+
+
+class TestAddNote(unittest.TestCase):
+    def setUp(self):
+        self.ticket = create_ticket(
+            "WiFi issue", "Network", "high", 5
+        )
+        self.tickets = [self.ticket]
+
+    def test_add_valid_note(self):
+        note = add_note(
+            self.tickets, "T001", "Alice", "Router restarted"
+        )
+
+        self.assertEqual(note["note_id"], "N001")
+        self.assertEqual(note["author"], "Alice")
+        self.assertEqual(note["message"], "Router restarted")
+        self.assertEqual(len(self.ticket["notes"]), 1)
+
+    def test_note_ids_increase(self):
+        first = add_note(
+            self.tickets, "T001", "Alice", "First update"
+        )
+        second = add_note(
+            self.tickets, "T001", "Bob", "Second update"
+        )
+
+        self.assertEqual(first["note_id"], "N001")
+        self.assertEqual(second["note_id"], "N002")
+
+    def test_empty_author_rejected(self):
+        with self.assertRaises(ValueError):
+            add_note(self.tickets, "T001", "   ", "Valid message")
+
+        self.assertEqual(self.ticket["notes"], [])
+
+    def test_short_message_rejected(self):
+        with self.assertRaises(ValueError):
+            add_note(self.tickets, "T001", "Alice", "Hey")
+
+        self.assertEqual(self.ticket["notes"], [])
+
+    def test_long_message_rejected(self):
+        with self.assertRaises(ValueError):
+            add_note(self.tickets, "T001", "Alice", "x" * 301)
+
+        self.assertEqual(self.ticket["notes"], [])
+
+    def test_rejected_note_does_not_consume_id(self):
+        with self.assertRaises(ValueError):
+            add_note(self.tickets, "T001", "Alice", "Bad")
+
+        note = add_note(
+            self.tickets, "T001", "Alice", "Valid message"
+        )
+
+        self.assertEqual(note["note_id"], "N001")
+
+    def test_resolved_ticket_rejects_note(self):
+        self.ticket["status"] = "resolved"
+
+        with self.assertRaises(ValueError):
+            add_note(
+                self.tickets, "T001", "Alice", "Valid message"
+            )
+
+        self.assertEqual(self.ticket["notes"], [])
+
+    def test_unknown_ticket_rejected(self):
+        with self.assertRaises(ValueError):
+            add_note(
+                self.tickets, "T999", "Alice", "Valid message"
+            )
 
 
 if __name__ == "__main__":
