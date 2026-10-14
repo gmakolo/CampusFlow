@@ -1,0 +1,24 @@
+[
+    {
+        "id": "T001",
+        "title": "WiFi issue",
+        "category": "Network",
+        "urgency": "high",
+        "affected_users": 23,
+        "priority": "critical",
+        "status": "in_progress",
+        "assigned_to": "mami",
+        "notes": []
+    },
+    {
+        "id": "T002",
+        "title": "Printer problem",
+        "category": "Hardware",
+        "urgency": "medium",
+        "affected_users": 4,
+        "priority": "medium",
+        "status": "open",
+        "assigned_to": null,
+        "notes": []
+    }
+]
