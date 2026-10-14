@@ -11,7 +11,7 @@ cd /home/student/CampusFlow
 python3 main.py
 ```
 
-From a fresh clone once the branch has been published:
+From a fresh clone of the published branch:
 
 ```bash
 git clone https://github.com/gmakolo/CampusFlow.git
@@ -103,4 +103,4 @@ git log --oneline origin/main..HEAD
 
 PR title: `feat: add CampusFlow Next Engineer B search, analytics and CLI`. Description must include `Refs #2`, real tests, pending A integration, and AI-assistance disclosure; request `gmakolo` for review. Publication status and review evidence are recorded separately, never inferred from local commits.
 
-Publication status: local commits are ready, but Git HTTPS authentication is absent and the GitHub integration rejected branch creation with HTTP 403. No remote publication or PR is claimed. See [completion report](docs/completion-report.md) and [ready PR draft](docs/pull-request-draft.md).
+Publication status: the Engineer B branch is pushed to the official repository. [PR #3](https://github.com/gmakolo/CampusFlow/pull/3) targets `main`, includes `Refs #2`, and requests `gmakolo` for review. Human review and approval are pending; nothing has been merged. See the [completion report](docs/completion-report.md) and [PR description](docs/pull-request-draft.md).

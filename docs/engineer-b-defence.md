@@ -13,6 +13,7 @@ Additional useful checks: empty reports are 0%; reopened tickets use current sta
 ## Practice commands
 
 ```bash
+python3 -m unittest tests.test_search.SearchTests.test_casefold_matches_unicode_sharp_s -v
 python3 -m unittest tests.test_search.SearchTests.test_combined_filters_use_and -v
 python3 -m unittest tests.test_search.SearchTests.test_results_do_not_alias_nested_notes -v
 python3 -m unittest tests.test_reports.ReportingTests.test_known_fixture_has_accurate_totals -v

@@ -1,4 +1,4 @@
-# Pull request draft
+# Published pull request — Issue #2
 
 Title: `feat: add CampusFlow Next Engineer B search, analytics and CLI`
 
@@ -6,9 +6,9 @@ Repository: `gmakolo/CampusFlow`
 Head: `feat/2-engineer-b-campusflow-next`
 Base: `main`
 Requested reviewer: `gmakolo`
-Status: prepared locally; not created on GitHub because authenticated publication is unavailable.
+Status: published as [PR #3](https://github.com/gmakolo/CampusFlow/pull/3), open and targeting main. Reviewer `gmakolo` is requested; no human review or approval has occurred, and no merge was performed.
 
-## Exact proposed PR body
+## Submitted PR body
 
 Refs #2
 

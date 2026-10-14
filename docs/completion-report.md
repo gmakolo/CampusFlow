@@ -19,13 +19,13 @@ Search/AND filters, complete B analytics, validated CLI, defensive workflow disp
 
 No actual notes/JSON persistence has been implemented on this B-only branch. Their CLI interfaces are tested with explicit mocks. No student-authored reflection, independent defence, or human review is invented.
 
-## Publication blocker observed
+## Publication verified
 
-`git push -u origin feat/2-engineer-b-campusflow-next` failed because the local Git client has no HTTPS credentials. The connected GitHub integration's branch-creation attempt returned HTTP 403, `Resource not accessible by integration`. Repository metadata reporting account push rights does not prove the integration has permission to write.
+The initial unauthenticated Git push failed, and the connected GitHub app returned HTTP 403 for branch creation. These were real earlier blockers. GitHub CLI was then installed locally from its official release with its release checksum verified, and browser authorization succeeded.
 
-The user created real Issue #2; no replacement issue was created. The pull request and reviewer request remain prepared, not submitted. There is no new remote branch/PR URL or final merged-main commit to claim. See `pull-request-draft.md` for the exact ready-to-submit description.
+On 2026-10-14, the authenticated GitHub CLI API confirmed the account `miikese` and repository permission `WRITE`. A normal Git push published `feat/2-engineer-b-campusflow-next` to `gmakolo/CampusFlow` without a force push. [PR #3](https://github.com/gmakolo/CampusFlow/pull/3) was created with `Refs #2`, targeting `main`. A subsequent API read verified the PR author, base, head, open state, and review request for `gmakolo`.
 
-Authenticate normal Git on this computer or enable the GitHub connection to write repository contents and pull requests for `gmakolo/CampusFlow`, then publish this branch and request `gmakolo`. Never put passwords/tokens in repository files or chat.
+The user-created Issue #2 is reused; no replacement issue was created. No push went to an old repository. No review, approval, or merge was performed. Genuine Engineer A review remains pending. The submitted description is preserved in `pull-request-draft.md`.
 
 ## Remaining assessment work
 
@@ -37,7 +37,7 @@ Authenticate normal Git on this computer or enable the GitHub connection to writ
 | Search and analytics | Implemented and verified |
 | JSON safety | A storage absent; B adapter tested with mocks |
 | Automated tests | 67 implemented-feature tests pass; integration blockers exposed |
-| GitHub collaboration | Real Issue #2; local commits; push/PR blocked by authentication; genuine reviews pending |
+| GitHub collaboration | Real Issue #2; branch pushed; PR #3 open with gmakolo requested; genuine reviews pending |
 | AI learning, quiz and defence | Quiz and study experiments verified; personal reflections/independent quiz/defence still required |
 
 This is not a fully integrated or assessment-complete submission. No numerical assessment score is asserted.
