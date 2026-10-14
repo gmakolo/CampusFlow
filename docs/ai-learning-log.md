@@ -29,3 +29,9 @@
 **How I tested it:** I ran `main.py`, tried the menu, and checked that the exit option worked.
 
 **Result:** I learned how separate modules can work together in one application.
+
+---
+
+## Engineer B — Issue #2 study material
+
+The original Engineer A entries above are preserved. Assistant-executed experiments and candidate-design verification for miikese are recorded in [ai-learning-engineer-b.md](ai-learning-engineer-b.md). They are labelled as AI-assisted study evidence, not invented first-person learner reflections. Miikese must reproduce them, add personal reflections, take the quiz independently, and explain the tests before assessment. See [engineer-b-defence.md](engineer-b-defence.md).
