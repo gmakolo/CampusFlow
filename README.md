@@ -102,3 +102,5 @@ git log --oneline origin/main..HEAD
 ```
 
 PR title: `feat: add CampusFlow Next Engineer B search, analytics and CLI`. Description must include `Refs #2`, real tests, pending A integration, and AI-assistance disclosure; request `gmakolo` for review. Publication status and review evidence are recorded separately, never inferred from local commits.
+
+Publication status: local commits are ready, but Git HTTPS authentication is absent and the GitHub integration rejected branch creation with HTTP 403. No remote publication or PR is claimed. See [completion report](docs/completion-report.md) and [ready PR draft](docs/pull-request-draft.md).
